@@ -1,6 +1,35 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.11-slim'
+        }
+    }
 
+    stages {
+        stage('Install Dependencies') {
+            steps {
+                sh '''
+                python -m venv venv
+                . venv/bin/activate
+                pip install -r requirements.txt
+                '''
+            }
+        }
+
+        stage('Run Application') {
+            steps {
+                sh '''
+                . venv/bin/activate
+                python app.py
+                '''
+            }
+        }
+    }
+}
+
+
+pipeline {
+    agent any
     stages {
 
         stage('Clone Repo') {
